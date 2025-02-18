@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -6,34 +7,71 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
+  const BASE_URL = "http://localhost:5000/api/todos";
+
   useEffect(() => {
-    updateTaskStatus(); // Check for expired tasks
+    fetchTasks();
   }, []);
 
-  const addTask = () => {
-    if (!newTask.title.trim() || !newTask.deadline) return alert("Title & Deadline required!");
+  // Fetch all tasks
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get(BASE_URL, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      setTasks(response.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  // Add new task
+  const addTask = async () => {
+    if (!newTask.title.trim() || !newTask.deadline) {
+      return alert("Title & Deadline required!");
+    }
     
-    const updatedTasks = [...tasks, { ...newTask, id: Date.now() }];
-    setTasks(updatedTasks);
-    setNewTask({ title: "", description: "", deadline: "", status: "ACTIVE" });
+    try {
+      const response = await axios.post(BASE_URL, newTask, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      setTasks([...tasks, response.data.todo]);
+      setNewTask({ title: "", description: "", deadline: "", status: "ACTIVE" });
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
-  const updateTaskStatus = () => {
-    const updatedTasks = tasks.map((task) => {
-      if (task.status !== "COMPLETE" && new Date(task.deadline) < new Date()) {
-        return { ...task, status: "EXPIRED" };
-      }
-      return task;
-    });
-    setTasks(updatedTasks);
+  // Update task status
+  const updateStatus = async (id, newStatus) => {
+    try {
+      await axios.put(`${BASE_URL}/${id}`, { status: newStatus }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      setTasks(tasks.map((task) => (task._id === id ? { ...task, status: newStatus } : task)));
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
   };
 
-  const updateStatus = (id, newStatus) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, status: newStatus } : task)));
-  };
-
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  // Delete a task
+  const deleteTask = async (id) => {
+    try {
+      await axios.delete(`${BASE_URL}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      setTasks(tasks.filter((task) => task._id !== id));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   const filteredTasks = tasks
@@ -97,7 +135,7 @@ export default function Dashboard() {
           <p className="text-center text-gray-500">No tasks found.</p>
         ) : (
           filteredTasks.map((task) => (
-            <div key={task.id} className="bg-white p-4 rounded-lg shadow-md mb-2">
+            <div key={task._id} className="bg-white p-4 rounded-lg shadow-md mb-2">
               <h3 className="text-lg font-semibold">{task.title}</h3>
               <p className="text-gray-600">{task.description}</p>
               <p className="text-sm text-gray-500">Deadline: {new Date(task.deadline).toLocaleString()}</p>
@@ -111,9 +149,9 @@ export default function Dashboard() {
 
               {/* Actions */}
               <div className="mt-2 flex gap-2">
-                <button onClick={() => updateStatus(task.id, "IN_PROGRESS")} className="text-yellow-500">In Progress</button>
-                <button onClick={() => updateStatus(task.id, "COMPLETE")} className="text-green-500">Complete</button>
-                <button onClick={() => deleteTask(task.id)} className="text-red-500">Delete</button>
+                <button onClick={() => updateStatus(task._id, "IN_PROGRESS")} className="text-yellow-500">In Progress</button>
+                <button onClick={() => updateStatus(task._id, "COMPLETE")} className="text-green-500">Complete</button>
+                <button onClick={() => deleteTask(task._id)} className="text-red-500">Delete</button>
               </div>
             </div>
           ))
@@ -121,7 +159,10 @@ export default function Dashboard() {
       </div>
 
       {/* Logout Button */}
-      <button onClick={() => console.log("Logout")} className="mt-6 bg-red-500 text-white p-2 rounded">
+      <button onClick={() => {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }} className="mt-6 bg-red-500 text-white p-2 rounded">
         Logout
       </button>
     </div>
