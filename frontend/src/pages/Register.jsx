@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -7,13 +8,31 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  // const handleRegister = async (e) => {
+  //   e.preventDefault();
+  //   // TODO: Implement backend registration logic
+  //   console.log("Registering:", { name, email, password });
+
+  //   // Simulate successful registration
+  //   navigate("/dashboard");
+  // };
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    // TODO: Implement backend registration logic
-    console.log("Registering:", { name, email, password });
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/register", {
+        username: name,
+        password: password
+      });
 
-    // Simulate successful registration
-    navigate("/dashboard");
+      console.log("Registration successful:", response.data);
+
+      // Navigate to dashboard after successful registration
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Registration failed:", error.response?.data || error.message);
+      alert("Registration failed. Please try again.");
+    }
   };
 
   return (
