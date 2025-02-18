@@ -8,14 +8,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // const handleRegister = async (e) => {
-  //   e.preventDefault();
-  //   // TODO: Implement backend registration logic
-  //   console.log("Registering:", { name, email, password });
 
-  //   // Simulate successful registration
-  //   navigate("/dashboard");
-  // };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -28,7 +21,7 @@ export default function Register() {
       console.log("Registration successful:", response.data);
 
       // Navigate to dashboard after successful registration
-      navigate("/dashboard");
+      navigate("/login");
     } catch (error) {
       console.error("Registration failed:", error.response?.data || error.message);
       alert("Registration failed. Please try again.");
@@ -78,3 +71,5 @@ export default function Register() {
     </div>
   );
 }
+
+
