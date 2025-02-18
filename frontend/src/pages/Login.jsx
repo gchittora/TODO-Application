@@ -1,18 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"
 
 export default function Login() {
-    const [email, setEmail] = useState("");
+    const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        // TODO: Add actual authentication logic
-        console.log("Logging in with:", { email, password });
+        try {
+            const response = await axios.post("http://localhost:5000/api/auth/login", {
+                username: userName, // Sending email as username because backend expects 'username'
+                password: password
+            });
 
-        // Simulate successful login
-        navigate("/dashboard");
+            console.log("Login successful:", response.data);
+
+            // Save the token in localStorage (optional)
+            localStorage.setItem("token", response.data.token);
+
+            // Navigate to dashboard after successful login
+            navigate("/dashboard");
+        } catch (error) {
+            console.error("Login failed:", error.response?.data || error.message);
+            alert("Invalid credentials. Please try again.");
+        }
     };
 
     return (
@@ -21,10 +34,10 @@ export default function Login() {
                 <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
                 <form onSubmit={handleLogin} className="space-y-4">
                     <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        type="text"
+                        placeholder="User name"
+                        value={userName}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
                         className="w-full p-2 border rounded"
                     />
