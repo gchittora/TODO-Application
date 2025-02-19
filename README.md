@@ -50,7 +50,7 @@ Try here : https://todo-application-1-cvhe.onrender.com
 ## ⚙️ Installation & Setup
 ### 1️⃣ Clone the Repository
 ```sh
-git clone https://github.com/yourusername/todoApp.git
+git clone https://github.com/gchittora/TODO-Application.git
 cd todoApp
 ```
 
