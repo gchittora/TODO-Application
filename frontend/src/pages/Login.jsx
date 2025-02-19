@@ -10,7 +10,7 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5000/api/auth/login", {
+            const response = await axios.post("https://todo-application-s2dw.onrender.com/api/auth/login", {
                 username: userName, // Sending email as username because backend expects 'username'
                 password: password
             });

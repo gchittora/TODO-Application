@@ -7,7 +7,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
-  const BASE_URL = "http://localhost:5000/api/todos";
+  const BASE_URL = "https://todo-application-s2dw.onrender.com/api/todos";
 
   useEffect(() => {
     fetchTasks();
