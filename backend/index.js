@@ -14,7 +14,13 @@ const app = express();
 
 // Apply Middleware
 app.use(express.json()); // Parses incoming JSON requests
-app.use(cors()); // Enables cross-origin requests
+//app.use(cors()); // Enables cross-origin requests
+
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://todo-application-1-cvhe.onrender.com'],
+    credentials: true
+}));
+
 
 // Connect to MongoDB
 connectDB();
