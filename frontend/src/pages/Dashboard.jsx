@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Dashboard() {
@@ -6,6 +7,7 @@ export default function Dashboard() {
   const [newTask, setNewTask] = useState({ title: "", description: "", deadline: "", status: "ACTIVE" });
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const navigate = useNavigate()
 
   const BASE_URL = "https://todo-application-s2dw.onrender.com/api/todos";
 
@@ -161,7 +163,8 @@ export default function Dashboard() {
       {/* Logout Button */}
       <button onClick={() => {
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        //window.location.href = "/login";
+        navigate("/login")
       }} className="mt-6 bg-red-500 text-white p-2 rounded">
         Logout
       </button>
