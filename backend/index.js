@@ -17,7 +17,9 @@ app.use(express.json()); // Parses incoming JSON requests
 //app.use(cors()); // Enables cross-origin requests
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://todo-application-1-cvhe.onrender.com'],
+    origin: ['https://todo-application-1-cvhe.onrender.com'], // Your deployed frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
     credentials: true
 }));
 
